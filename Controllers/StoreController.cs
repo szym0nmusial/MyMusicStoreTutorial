@@ -5,27 +5,20 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using MyMusicStoreTutorial.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace MyMusicStoreTutorial.Controllers
 {
     public class StoreController : Controller
     {
-        IEnumerable<Genre> genres;
-        public StoreController()
-        {
-            genres = new List<Genre>
-            {
-                new Genre { Name = "Disco"},
-                new Genre { Name = "Jazz"},
-                new Genre { Name = "Rock"}
-            };
-        }
+        MusicStoreEntities storeDB = new MusicStoreEntities();
         /// <summary>
         /// GET: /Store/
         /// </summary>
         /// <returns></returns>
         public ActionResult Index()
         {
+            var genres = storeDB.Genres.ToList();
             return View(genres);
         }
 
@@ -36,7 +29,9 @@ namespace MyMusicStoreTutorial.Controllers
         /// <returns></returns>
         public ActionResult Browse(string genre)
         {
-            return View(new Genre { Name = genre });
+            var genreModel = storeDB.Genres.Include("Albums")
+             .Single(g => g.Name == genre);
+            return View(genreModel);
         }
 
 
@@ -46,7 +41,7 @@ namespace MyMusicStoreTutorial.Controllers
     /// <returns></returns>
     public ActionResult Details(int id)
         {
-             return View(new Album { Title = "Album " + id });
+             return View(storeDB.Albums.Find(id));
         }
     }
 }
