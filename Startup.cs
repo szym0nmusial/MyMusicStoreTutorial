@@ -28,9 +28,10 @@ namespace MyMusicStoreTutorial
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
-            services.AddDbContext<MusicStoreEntities>(options =>
-                options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"))
-            );
+            services.AddDbContext<MusicStoreEntities>();
+            //options =>
+            //    options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"))
+            //);
 
 
 #if DEBUG
