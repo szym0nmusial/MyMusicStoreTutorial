@@ -8,9 +8,9 @@ namespace MyMusicStoreTutorial.Controllers
 {
     public class HomeController : Controller
     {
-        public string Index()
+        public ActionResult Index()
         {
-            return "HomeControler Index";
+            return View();
         }
     }
 }

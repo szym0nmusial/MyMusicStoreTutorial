@@ -9,7 +9,6 @@
     <Folder Include="Models\" />
     <Folder Include="Content\" />
     <Folder Include="Scripts\" />
-    <Folder Include="Views\" />
   </ItemGroup>
 
 </Project>
