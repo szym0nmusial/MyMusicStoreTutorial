@@ -17,7 +17,6 @@
             <input type="hidden" asp-for="AlbumId" />
             <div class="form-group">
                 <label asp-for="GenreId" class="control-label"></label>
-                @Html.DropDownList("GenreId")
                 <select asp-for="GenreId" class="form-control" asp-items="ViewBag.GenreId"></select>
 
                 <span asp-validation-for="GenreId" class="text-danger"></span>
