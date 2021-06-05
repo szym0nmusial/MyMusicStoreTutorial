@@ -7,20 +7,21 @@
 }
 
 <h1>Create</h1>
-
+<script src="@Url.Content("~/Scripts/jquery.validate.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")" type="text/javascript"></script>
 <h4>Album</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Create">
+        <form asp-action="Create" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="GenreId" class="control-label"></label>
-                <select asp-for="GenreId" class ="form-control" asp-items="ViewBag.GenreId"></select>
+                <select asp-for="GenreId" class="form-control" asp-items="ViewBag.GenreId"></select>
             </div>
             <div class="form-group">
                 <label asp-for="ArtistId" class="control-label"></label>
-                <select asp-for="ArtistId" class ="form-control" asp-items="ViewBag.ArtistId"></select>
+                <select asp-for="ArtistId" class="form-control" asp-items="ViewBag.ArtistId"></select>
             </div>
             <div class="form-group">
                 <label asp-for="Title" class="control-label"></label>
@@ -45,9 +46,9 @@
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    @Html.ActionLink("Back to List", "Index")
 </div>
 
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+@*@section Scripts {
+        @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    }*@

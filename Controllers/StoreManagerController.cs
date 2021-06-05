@@ -12,6 +12,8 @@ namespace MyMusicStoreTutorial.Controllers
     public class StoreManagerController : Controller
     {
         private readonly MusicStoreEntities _context;
+        private MusicStoreEntities db = new MusicStoreEntities();
+
 
         public StoreManagerController(MusicStoreEntities context)
         {
@@ -48,8 +50,14 @@ namespace MyMusicStoreTutorial.Controllers
         // GET: StoreManager/Create
         public IActionResult Create()
         {
-            ViewData["ArtistId"] = new SelectList(_context.Set<Artist>(), "ArtistId", "ArtistId");
-            ViewData["GenreId"] = new SelectList(_context.Genres, "GenreId", "GenreId");
+            //ViewData["ArtistId"] = new SelectList(_context.Set<Artist>(), "ArtistId", "ArtistId");
+            //ViewData["GenreId"] = new SelectList(_context.Genres, "GenreId", "GenreId");
+
+            ViewBag.GenreId = new SelectList(db.Genres, "GenreId", "Name");
+            ViewBag.ArtistId = new SelectList(db.Artists, "ArtistId", "Name");
+
+
+
             return View();
         }
 
@@ -84,8 +92,9 @@ namespace MyMusicStoreTutorial.Controllers
             {
                 return NotFound();
             }
-            ViewData["ArtistId"] = new SelectList(_context.Set<Artist>(), "ArtistId", "ArtistId", album.ArtistId);
-            ViewData["GenreId"] = new SelectList(_context.Genres, "GenreId", "GenreId", album.GenreId);
+            
+            ViewBag.ArtistId = new SelectList(_context.Set<Artist>(), "ArtistId", "Name", album.ArtistId);
+            ViewBag.GenreId = new SelectList(_context.Genres, "GenreId", "Name", album.GenreId);
             return View(album);
         }
 
