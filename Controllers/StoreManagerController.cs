@@ -10,7 +10,7 @@ using MyMusicStoreTutorial.Models;
 
 namespace MyMusicStoreTutorial.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Admin") ]
 
     public class StoreManagerController : Controller
     {

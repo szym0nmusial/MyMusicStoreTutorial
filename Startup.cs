@@ -20,7 +20,11 @@ using IdentityServer4.AspNetIdentity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace MyMusicStoreTutorial
-{  
+{
+    //class MyClass : RoleManager
+    //{
+
+    //}
     public class Startup
     {
         public IConfiguration Configuration { get; }
@@ -28,6 +32,36 @@ namespace MyMusicStoreTutorial
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+        }
+
+        private async void HardCodedAdmin(IServiceProvider serviceProvider)
+        {
+            try
+            {
+                var RoleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+                var UserManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+
+                bool adminRoleExists = await RoleManager.RoleExistsAsync("Admin");
+
+                if (!adminRoleExists)
+                {
+                    await RoleManager.CreateAsync(new IdentityRole("Admin"));
+                }
+
+                var Admin = new ApplicationUser { UserName = "szymon_0@hotmail.com", Email = "Input.Email" };
+                var AddAdminRoleResult = await UserManager.CreateAsync(Admin, "7W-*6btcPaafc_@");
+
+                if (AddAdminRoleResult.Succeeded)
+                {
+                    var AddAdminResult = await UserManager.AddToRoleAsync(Admin, "Admin");
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("B³¹d w dodawaniu ról\n" + e.Message);
+
+            }
+
         }
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
@@ -63,8 +97,10 @@ namespace MyMusicStoreTutorial
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider services)
         {
+            HardCodedAdmin(services);
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

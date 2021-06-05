@@ -25,11 +25,7 @@ namespace MyMusicStoreTutorial.Controllers
         {
             _userManager = userManager;
             _signInManager = signInManager;
-            _logger = logger;
-            if (userManager.Users.Count() == 0)
-            {
-                _userManager.CreateAsync(new ApplicationUser { UserName = "szymon_0@hotmail.com", Email = "Input.Email" }, "7W-*6btcPaafc_@");
-            }
+            _logger = logger;           
         }
 
 
