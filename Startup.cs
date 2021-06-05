@@ -53,7 +53,7 @@ namespace MyMusicStoreTutorial
                 options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
 
                 options.LoginPath = "/Account/LogOn";
-                options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+                options.AccessDeniedPath = "/Account/AccessDenied";
                 options.SlidingExpiration = true;
             });
 

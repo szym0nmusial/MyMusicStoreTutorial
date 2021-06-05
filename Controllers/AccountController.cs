@@ -26,7 +26,10 @@ namespace MyMusicStoreTutorial.Controllers
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
-            _userManager.CreateAsync(new ApplicationUser { UserName = "szymon_0@hotmail.com", Email = "Input.Email" }, "7W-*6btcPaafc_@");
+            if (userManager.Users.Count() == 0)
+            {
+                _userManager.CreateAsync(new ApplicationUser { UserName = "szymon_0@hotmail.com", Email = "Input.Email" }, "7W-*6btcPaafc_@");
+            }
         }
 
 
@@ -40,6 +43,13 @@ namespace MyMusicStoreTutorial.Controllers
         //}
 
         //
+
+        public ActionResult AccessDenied()
+        {
+            return RedirectToAction("Index", "Home");
+        }
+
+
         // GET: /Account/LogOn
 
         public ActionResult LogOn()
@@ -55,29 +65,29 @@ namespace MyMusicStoreTutorial.Controllers
         {
             if (ModelState.IsValid)
             {
-                var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, true, false);
+                var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, true);
+                //   if (Membership.ValidateUser(model.UserName, model.Password))
+                if (result.Succeeded)
+                {
+                    _logger.LogInformation("Pomyślnie zalogowano");
 
+                    //    MigrateShoppingCart(model.UserName);
+                    if (Url.IsLocalUrl(returnUrl) && returnUrl.Length > 1 && returnUrl.StartsWith("/")
+                        && !returnUrl.StartsWith("//") && !returnUrl.StartsWith("/\\"))
+                    {
+                        return Redirect(returnUrl);
+                    }
+                    else
+                    {
+                        return RedirectToAction("Index", "Home");
+                    }
+                }
+                else
+                {
+                    ModelState.AddModelError("", "The user name or password provided is incorrect.");
+                    _logger.LogWarning("Niepoprawne logowanie");
 
-
-                //if (Membership.ValidateUser(model.UserName, model.Password))
-                //{
-                //    MigrateShoppingCart(model.UserName);
-
-                //    FormsAuthentication.SetAuthCookie(model.UserName, model.RememberMe);
-                //    if (Url.IsLocalUrl(returnUrl) && returnUrl.Length > 1 && returnUrl.StartsWith("/")
-                //        && !returnUrl.StartsWith("//") && !returnUrl.StartsWith("/\\"))
-                //    {
-                //        return Redirect(returnUrl);
-                //    }
-                //    else
-                //    {
-                //        return RedirectToAction("Index", "Home");
-                //    }
-                //}
-                //else
-                //{
-                //    ModelState.AddModelError("", "The user name or password provided is incorrect.");
-                //}
+                }
             }
 
             // If we got this far, something failed, redisplay form
@@ -87,10 +97,11 @@ namespace MyMusicStoreTutorial.Controllers
         //
         // GET: /Account/LogOff
 
-        public ActionResult LogOff()
+        public async Task<IActionResult> LogOff()
         {
             //FormsAuthentication.SignOut();
-
+            await _signInManager.SignOutAsync();
+            _logger.LogInformation("Wylogowano");
             return RedirectToAction("Index", "Home");
         }
 
@@ -106,7 +117,7 @@ namespace MyMusicStoreTutorial.Controllers
         // POST: /Account/Register
 
         [HttpPost]
-        public ActionResult Register(RegisterModel model)
+        public async Task<IActionResult> Register(RegisterModel model)
         {
             if (ModelState.IsValid)
             {
@@ -114,17 +125,19 @@ namespace MyMusicStoreTutorial.Controllers
                 //MembershipCreateStatus createStatus;
                 //Membership.CreateUser(model.UserName, model.Password, model.Email, "question", "answer", true, null, out createStatus);
 
-                //if (createStatus == MembershipCreateStatus.Success)
-                //{
-                //    MigrateShoppingCart(model.UserName); 
-                    
-                //    FormsAuthentication.SetAuthCookie(model.UserName, false /* createPersistentCookie */);
-                //    return RedirectToAction("Index", "Home");
-                //}
-                //else
-                //{
-                //    ModelState.AddModelError("", ErrorCodeToString(createStatus));
-                //}
+                var result = await _userManager.CreateAsync(new ApplicationUser() {UserName=model.UserName, Email=model.Email }, model.Password);
+
+
+                if (result.Succeeded)
+                {
+                    //MigrateShoppingCart(model.UserName);
+                    _logger.LogInformation("Zarejestrowano");
+                    return RedirectToAction("Index", "Home");
+                }
+                else
+                {
+                    ModelState.AddModelError("",  ErrorCodeToString(result.Errors));
+                }
             }
 
             // If we got this far, something failed, redisplay form
@@ -184,6 +197,17 @@ namespace MyMusicStoreTutorial.Controllers
         {
             return View();
         }
+
+        private static string ErrorCodeToString(IEnumerable<IdentityError> errors)
+        {
+            var resp = "";
+            foreach (var item in errors)
+            {
+                resp += item.Description + "\n";
+            }
+            return resp;
+        }
+
 
         //#region Status Codes
         //private static string ErrorCodeToString(MembershipCreateStatus createStatus)
