@@ -50,14 +50,8 @@ namespace MyMusicStoreTutorial.Controllers
         // GET: StoreManager/Create
         public IActionResult Create()
         {
-            //ViewData["ArtistId"] = new SelectList(_context.Set<Artist>(), "ArtistId", "ArtistId");
-            //ViewData["GenreId"] = new SelectList(_context.Genres, "GenreId", "GenreId");
-
             ViewBag.GenreId = new SelectList(db.Genres, "GenreId", "Name");
             ViewBag.ArtistId = new SelectList(db.Artists, "ArtistId", "Name");
-
-
-
             return View();
         }
 
@@ -74,8 +68,8 @@ namespace MyMusicStoreTutorial.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ArtistId"] = new SelectList(_context.Set<Artist>(), "ArtistId", "ArtistId", album.ArtistId);
-            ViewData["GenreId"] = new SelectList(_context.Genres, "GenreId", "GenreId", album.GenreId);
+            ViewBag.GenreId = new SelectList(_context.Set<Artist>(), "ArtistId", "ArtistId", album.ArtistId);
+            ViewBag.ArtistId = new SelectList(_context.Genres, "GenreId", "GenreId", album.GenreId);
             return View(album);
         }
 
