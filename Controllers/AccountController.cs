@@ -1,19 +1,34 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
+using IdentityServer4.Services;
+using IdentityServer4.Stores;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-//using System.Web.Mvc;
-//using System.Web.Routing;
-//using System.Web.Security;
-///using Mvc3ToolsUpdateWeb_Default.Models;
+using Microsoft.Extensions.Logging;
 using MyMusicStoreTutorial.Models;
 
 namespace MyMusicStoreTutorial.Controllers
 {
     public class AccountController : Controller
     {
+
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly ILogger<AccountController> _logger;
+
+        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ILogger<AccountController> logger)
+        {
+            _userManager = userManager;
+            _signInManager = signInManager;
+            _logger = logger;
+            _userManager.CreateAsync(new ApplicationUser { UserName = "szymon_0@hotmail.com", Email = "Input.Email" }, "7W-*6btcPaafc_@");
+        }
+
 
         //private void MigrateShoppingCart(string UserName)
         //{
@@ -36,14 +51,18 @@ namespace MyMusicStoreTutorial.Controllers
         // POST: /Account/LogOn
 
         [HttpPost]
-        public ActionResult LogOn(LogOnModel model, string returnUrl)
+        public async Task<IActionResult> LogOn(LogOnModel model, string returnUrl)
         {
             if (ModelState.IsValid)
             {
+                var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, true, false);
+
+
+
                 //if (Membership.ValidateUser(model.UserName, model.Password))
                 //{
-                //    MigrateShoppingCart(model.UserName); 
-                    
+                //    MigrateShoppingCart(model.UserName);
+
                 //    FormsAuthentication.SetAuthCookie(model.UserName, model.RememberMe);
                 //    if (Url.IsLocalUrl(returnUrl) && returnUrl.Length > 1 && returnUrl.StartsWith("/")
                 //        && !returnUrl.StartsWith("//") && !returnUrl.StartsWith("/\\"))

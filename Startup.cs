@@ -12,9 +12,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using MyMusicStoreTutorial.Models;
 using Microsoft.Extensions.Configuration;
+using IdentityServer4.Stores;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.Identity;
+using IdentityServer4.Services;
+using IdentityServer4.AspNetIdentity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace MyMusicStoreTutorial
-{
+{  
     public class Startup
     {
         public IConfiguration Configuration { get; }
@@ -29,10 +35,27 @@ namespace MyMusicStoreTutorial
         {
             services.AddControllersWithViews();
             services.AddDbContext<MusicStoreEntities>();
-            //options =>
-            //    options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"))
-            //);
 
+
+            services.AddDbContext<IdentityDatabaseContext>(options =>
+         options.UseInMemoryDatabase("InMemoryDb"));
+
+            services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+                        options.SignIn.RequireConfirmedAccount = false)
+                .AddEntityFrameworkStores<IdentityDatabaseContext>()
+                .AddDefaultTokenProviders();
+
+
+            services.ConfigureApplicationCookie(options =>
+            {
+                // Cookie settings
+                options.Cookie.HttpOnly = true;
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
+
+                options.LoginPath = "/Account/LogOn";
+                options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+                options.SlidingExpiration = true;
+            });
 
 #if DEBUG
             services.AddDirectoryBrowser();
@@ -51,10 +74,10 @@ namespace MyMusicStoreTutorial
             {
                 FileProvider = new PhysicalFileProvider(
                     Path.Combine(env.ContentRootPath, " ")),
-                    RequestPath = "/all"
+                RequestPath = "/all"
             });
 #endif
-
+               
             app.UseStaticFiles(new StaticFileOptions
             {
                 FileProvider = new PhysicalFileProvider(
@@ -70,6 +93,9 @@ namespace MyMusicStoreTutorial
             });
 
             app.UseRouting();
+
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
