@@ -21,10 +21,6 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace MyMusicStoreTutorial
 {
-    //class MyClass : RoleManager
-    //{
-
-    //}
     public class Startup
     {
         public IConfiguration Configuration { get; }
@@ -91,6 +87,16 @@ namespace MyMusicStoreTutorial
                 options.SlidingExpiration = true;
             });
 
+            services.AddDistributedMemoryCache();
+
+            services.AddSession(options =>
+            {
+                options.Cookie.Name = ShoppingCart.CartSessionKey;
+                options.IdleTimeout = TimeSpan.FromSeconds(10);
+                //options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
+
 #if DEBUG
             services.AddDirectoryBrowser();
 #endif
@@ -132,6 +138,9 @@ namespace MyMusicStoreTutorial
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseSession();
+
 
             app.UseEndpoints(endpoints =>
             {

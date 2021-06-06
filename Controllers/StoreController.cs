@@ -41,7 +41,15 @@ namespace MyMusicStoreTutorial.Controllers
     /// <returns></returns>
     public ActionResult Details(int id)
         {
-             return View(storeDB.Albums.Find(id));
+            //var musicStoreEntities = storeDB.Albums.Include(a => a.Artist).Include(a => a.Genre).Where(a => a.AlbumId == id);
+
+            //var aa = storeDB.Albums.Find(id).Include(a => a.Genre);
+
+            var musicStoreEntities = storeDB.Albums.Include(a => a.Artist).Include(a => a.Genre).FirstOrDefault(a => a.AlbumId == id);
+
+
+
+            return View(musicStoreEntities);
         }
     }
 }

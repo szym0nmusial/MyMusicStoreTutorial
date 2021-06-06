@@ -5,6 +5,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Scripts\CartUpdate.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Scripts\CartUpdate.js" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Include="Content\Images\home-showcase.png" />
     <Content Include="Content\Images\logo.png" />
     <Content Include="Content\Images\placeholder.gif" />
