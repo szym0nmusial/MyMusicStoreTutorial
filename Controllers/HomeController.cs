@@ -10,23 +10,24 @@ namespace MyMusicStoreTutorial.Controllers
 {
     public class HomeController : Controller
     {
+        MusicStoreEntities storeDB;
         public HomeController(MusicStoreEntities musicStoreEntities )
         {
-            // var onealbum = musicStoreEntities.Albums.FirstOrDefault();
-
-            // var oneaar = musicStoreEntities.Artists.FirstOrDefault();
-
-            //// var oneger = musicStoreEntities.Genres.FirstOrDefault();
-
-            var xd = musicStoreEntities.Albums.FirstOrDefault();
-
-
-           // Console.WriteLine(onealbum.Artist.Name);
-
+            storeDB = musicStoreEntities;
         }
         public ActionResult Index()
         {
-            return View();
+            var albums = GetTopSellingAlbums(5);
+            return View(albums);
+        }
+        private List<Album> GetTopSellingAlbums(int count)
+        {
+            // Group the order details by album and return
+            // the albums with the highest count
+            return storeDB.Albums
+            .OrderByDescending(a => a.OrderDetails.Count())
+            .Take(count)
+            .ToList();
         }
     }
 }
