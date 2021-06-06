@@ -7,6 +7,7 @@ using IdentityServer4.Services;
 using IdentityServer4.Stores;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -29,16 +30,18 @@ namespace MyMusicStoreTutorial.Controllers
         }
 
 
-        //private void MigrateShoppingCart(string UserName)
-        //{
-        //    // Associate shopping cart items with logged-in user
-        //    var cart = ShoppingCart.GetCart(this.HttpContext);
+        private void MigrateShoppingCart(string UserName)
+        {
+            // Associate shopping cart items with logged-in user
+            var cart = ShoppingCart.GetCart(this.HttpContext);
 
-        //    cart.MigrateCart(UserName);
-        //    Session[ShoppingCart.CartSessionKey] = UserName;
-        //}
+            cart.MigrateCart(UserName);
 
-        //
+            HttpContext.Session.SetString(ShoppingCart.CartSessionKey, UserName);
+            //Session[ShoppingCart.CartSessionKey] = UserName;
+        }
+
+
 
         public ActionResult AccessDenied()
         {
@@ -67,7 +70,7 @@ namespace MyMusicStoreTutorial.Controllers
                 {
                     _logger.LogInformation("Pomyślnie zalogowano");
 
-                    //    MigrateShoppingCart(model.UserName);
+                        MigrateShoppingCart(model.UserName);
                     if (Url.IsLocalUrl(returnUrl) && returnUrl.Length > 1 && returnUrl.StartsWith("/")
                         && !returnUrl.StartsWith("//") && !returnUrl.StartsWith("/\\"))
                     {
@@ -126,7 +129,7 @@ namespace MyMusicStoreTutorial.Controllers
 
                 if (result.Succeeded)
                 {
-                    //MigrateShoppingCart(model.UserName);
+                    MigrateShoppingCart(model.UserName);
                     _logger.LogInformation("Zarejestrowano");
                     return RedirectToAction("Index", "Home");
                 }

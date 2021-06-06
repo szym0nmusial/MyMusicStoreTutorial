@@ -115,6 +115,10 @@ namespace MyMusicStoreTutorial.Models
             // Iterate over the items in the cart, adding the order details for each
             foreach (var item in cartItems)
             {
+
+                item.Album = storeDB.Albums.FirstOrDefault(a => a.AlbumId == item.AlbumId);
+
+
                 var orderDetail = new OrderDetail
                 {
                     AlbumId = item.AlbumId,
